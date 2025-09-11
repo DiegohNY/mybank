@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
-import { BankingSecurity } from "@/middleware/security";
 import { extractUserIdFromToken } from "@/lib/jwt";
+
+export const dynamic = "force-dynamic";
 
 // GET - Recupera tutti i conti dell'utente
 export async function GET(request: NextRequest) {

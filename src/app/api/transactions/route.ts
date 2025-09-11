@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
 import { extractUserIdFromToken } from "@/lib/jwt";
 
-// Forza comportamento dinamico - necessario per request.url
 export const dynamic = "force-dynamic";
 
 // GET - Recupera storico transazioni dell'utente con filtri
