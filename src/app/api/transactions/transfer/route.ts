@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
+import { extractUserIdFromToken } from "@/lib/jwt";
 
-function estraiIdDaToken(token: string) {
-  if (token.includes("token_")) {
-    return parseInt(token.split("_")[1]);
-  }
-  return null;
-}
+// Forza il rendering dinamico per questa route API
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const userId = estraiIdDaToken(token);
+    const userId = extractUserIdFromToken(token);
 
     if (!userId) {
       return NextResponse.json(
@@ -93,7 +90,6 @@ export async function POST(request: NextRequest) {
       let toAccountQuery = "SELECT id, balance FROM accounts WHERE id = ?";
       let toAccountParam = to_account_id;
 
-      // Se to_account_id è una stringa che contiene IBAN, estrai il numero del conto
       if (
         typeof to_account_id === "string" &&
         to_account_id.includes("IT60 X054 ")
@@ -106,8 +102,7 @@ export async function POST(request: NextRequest) {
         typeof to_account_id === "string" &&
         to_account_id.length > 10
       ) {
-        // Se è un IBAN completo, estrai il numero del conto (ultimi caratteri)
-        const accountNumber = to_account_id.slice(-12); // Prendi gli ultimi 12 caratteri
+        const accountNumber = to_account_id.slice(-12);
         toAccountQuery =
           "SELECT id, balance FROM accounts WHERE account_number = ?";
         toAccountParam = accountNumber;
