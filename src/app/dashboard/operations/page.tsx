@@ -16,6 +16,13 @@ import {
   executeTransfer,
   executeDepositWithdrawal,
 } from "@/utils/operations";
+import {
+  IoAdd,
+  IoArrowForward,
+  IoSwapHorizontal,
+  IoCheckmark,
+  IoClose,
+} from "react-icons/io5";
 
 export default function OperationsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -88,7 +95,11 @@ export default function OperationsPage() {
       if (selectedOperation === "transfer_out") {
         result = await executeTransfer(formData, amount);
       } else {
-        result = await executeDepositWithdrawal(selectedOperation, formData, amount);
+        result = await executeDepositWithdrawal(
+          selectedOperation,
+          formData,
+          amount
+        );
       }
 
       if (result.success) {
@@ -117,63 +128,21 @@ export default function OperationsPage() {
       value: "deposit",
       label: "Deposito",
       description: "Aggiungi denaro al tuo conto",
-      icon: (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-          />
-        </svg>
-      ),
+      icon: <IoAdd className="w-6 h-6" />,
       color: "emerald",
     },
     {
       value: "withdrawal",
       label: "Prelievo",
       description: "Preleva denaro dal tuo conto",
-      icon: (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M20 12H4m16 0l-4 4m4-4l-4-4"
-          />
-        </svg>
-      ),
+      icon: <IoArrowForward className="w-6 h-6" />,
       color: "red",
     },
     {
       value: "transfer_out",
       label: "Bonifico",
       description: "Trasferisci denaro ad altro conto",
-      icon: (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-          />
-        </svg>
-      ),
+      icon: <IoSwapHorizontal className="w-6 h-6" />,
       color: "blue",
     },
   ];
@@ -250,17 +219,7 @@ export default function OperationsPage() {
                 {selectedOperation === operation.value && (
                   <div className="absolute top-4 right-4">
                     <div className="w-6 h-6 bg-primary-navy rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-3 h-3 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <IoCheckmark className="w-3 h-3 text-white" />
                     </div>
                   </div>
                 )}
@@ -291,19 +250,7 @@ export default function OperationsPage() {
                 }}
                 className="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <IoClose className="w-5 h-5" />
               </button>
             </div>
 

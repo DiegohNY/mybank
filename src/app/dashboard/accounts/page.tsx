@@ -114,7 +114,7 @@ export default function AccountsPage() {
     setCreatingAccount(true);
 
     try {
-      const data = await apiRequest("/api/accounts", {
+      const data = await apiRequest("/api/accounts/new", {
         method: "POST",
         body: JSON.stringify({
           account_type: newAccountType,

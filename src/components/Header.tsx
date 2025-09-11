@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { IoLogOut } from "react-icons/io5";
 
 interface HeaderProps {
   type: "home" | "dashboard" | "sub-dashboard";
@@ -28,11 +29,11 @@ export default function Header({
   return (
     <header className="relative bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
       <div className="absolute inset-0 bg-gradient-to-r from-primary-navy/5 via-transparent to-secondary-gold/5"></div>
-      <div className="relative max-w-7xl mx-auto px-8 py-4">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-8 py-4">
         <div className="flex justify-between items-center">
           {/* Logo e Badge */}
           <div className="flex flex-col">
-            <h1 className="text-3xl font-light tracking-tight text-slate-900 font-serif">
+            <h1 className="text-2xl sm:text-3xl font-light tracking-tight text-slate-900 font-serif">
               MyBank
             </h1>
             <span className="text-xs font-medium text-secondary-gold uppercase tracking-widest">
@@ -41,18 +42,18 @@ export default function Header({
           </div>
 
           {/* Sezione destra - varia in base al tipo */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3 sm:space-x-6">
             {type === "home" && (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <button
                   onClick={handleLoginClick}
-                  className="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors duration-200"
+                  className="px-3 sm:px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors duration-200 text-sm sm:text-base"
                 >
                   Accedi
                 </button>
                 <button
                   onClick={handleRegisterClick}
-                  className="px-6 py-2 bg-gradient-to-r from-primary-navy to-primary-teal text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+                  className="px-4 sm:px-6 py-2 bg-gradient-to-r from-primary-navy to-primary-teal text-white font-medium rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 text-sm sm:text-base"
                 >
                   Registrati
                 </button>
@@ -63,14 +64,14 @@ export default function Header({
               userName &&
               userInitials &&
               onLogout && (
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-navy to-primary-teal rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-medium text-sm">
+                <div className="flex items-center space-x-3 sm:space-x-6">
+                  <div className="flex items-center space-x-2 sm:space-x-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-navy to-primary-teal rounded-full flex items-center justify-center shadow-lg">
+                      <span className="text-white font-medium text-xs sm:text-sm">
                         {userInitials}
                       </span>
                     </div>
-                    <div>
+                    <div className="hidden sm:block">
                       <span className="text-slate-800 font-medium text-lg">
                         {userName}
                       </span>
@@ -79,22 +80,12 @@ export default function Header({
 
                   <button
                     onClick={onLogout}
-                    className="group flex items-center space-x-2 px-4 py-2 text-slate-600 hover:text-slate-800 transition-all duration-200 hover:bg-slate-100/60 rounded-xl"
+                    className="group flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 text-slate-600 hover:text-slate-800 transition-all duration-200 hover:bg-slate-100/60 rounded-xl"
                   >
-                    <svg
-                      className="w-4 h-4 group-hover:rotate-3 transition-transform"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                      />
-                    </svg>
-                    <span className="font-medium">Esci</span>
+                    <IoLogOut className="w-4 h-4 group-hover:rotate-3 transition-transform" />
+                    <span className="font-medium text-sm sm:text-base">
+                      Esci
+                    </span>
                   </button>
                 </div>
               )}

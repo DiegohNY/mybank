@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
-import { extractUserIdFromToken } from "@/utils/auth";
+import { extractUserIdFromToken } from "@/lib/jwt";
 
 // GET - Dettagli di un account specifico
 export async function GET(
@@ -73,7 +73,8 @@ export async function GET(
     )) as any[];
 
     // Statistiche mensili: entrate e uscite del mese corrente
-    const [monthlyStats] = (await db.execute(`
+    const [monthlyStats] = (await db.execute(
+      `
       SELECT 
         SUM(CASE WHEN transaction_type IN ('deposit', 'transfer_in') THEN amount ELSE 0 END) as monthly_income,
         SUM(CASE WHEN transaction_type IN ('withdrawal', 'transfer_out') THEN amount ELSE 0 END) as monthly_expenses,
@@ -82,7 +83,9 @@ export async function GET(
       WHERE account_id = ? 
         AND YEAR(created_at) = YEAR(CURRENT_DATE()) 
         AND MONTH(created_at) = MONTH(CURRENT_DATE())
-    `, [accountId])) as any[];
+    `,
+      [accountId]
+    )) as any[];
 
     // Combina tutti i dati
     const enrichedAccount = {
@@ -93,7 +96,7 @@ export async function GET(
         monthly_income: parseFloat(monthlyStats[0]?.monthly_income || 0),
         monthly_expenses: parseFloat(monthlyStats[0]?.monthly_expenses || 0),
         monthly_transactions: monthlyStats[0]?.monthly_transactions || 0,
-      }
+      },
     };
 
     return NextResponse.json({

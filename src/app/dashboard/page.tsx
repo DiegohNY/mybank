@@ -27,7 +27,11 @@ import { getAccountTypeLabel } from "@/utils/account";
 import { getTransactionIcon } from "@/utils/icons";
 import { formatDate } from "@/utils/date";
 import { checkUserLogin, handleLogout, getUserInitials } from "@/utils/auth";
-import { calculateTotalBalance, calculateMonthlyIncome, calculateMonthlyExpenses } from "@/utils/financial";
+import {
+  calculateTotalBalance,
+  calculateMonthlyIncome,
+  calculateMonthlyExpenses,
+} from "@/utils/financial";
 import { Account, Transazione, Utente } from "@/types";
 
 export default function DashboardPage() {
@@ -96,7 +100,6 @@ export default function DashboardPage() {
     }
   };
 
-
   if (loading) {
     return LoadingSpinner();
   }
@@ -155,19 +158,7 @@ export default function DashboardPage() {
               <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-slate-200/60 shadow-banking hover:shadow-lg transition-all duration-300">
                 <div className="flex items-center justify-between mb-6">
                   <div className="w-14 h-14 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 rounded-2xl flex items-center justify-center">
-                    <svg
-                      className="w-7 h-7 text-emerald-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M7 11l5-5m0 0l5 5m-5-5v12"
-                      />
-                    </svg>
+                    <IoTrendingUp className="w-7 h-7 text-emerald-600" />
                   </div>
                 </div>
 
@@ -236,7 +227,7 @@ export default function DashboardPage() {
               <p className="text-slate-600">Gestisci il tuo conto</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {/* Gestione Conti */}
               <button
                 onClick={() => router.push("/dashboard/accounts")}
@@ -531,19 +522,7 @@ export default function DashboardPage() {
                 ) : (
                   <div className="text-center py-12">
                     <div className="w-20 h-20 mx-auto mb-6 bg-slate-100 rounded-2xl flex items-center justify-center">
-                      <svg
-                        className="w-10 h-10 text-slate-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                        />
-                      </svg>
+                      <IoDocument className="w-10 h-10 text-slate-400" />
                     </div>
                     <p className="text-slate-600 text-lg">
                       Nessuna transazione recente

@@ -1,9 +1,4 @@
 import { getToken, getUserData, clearAuthData } from "./localStorage";
-import { extractUserIdFromToken as jwtExtractUserId } from "@/lib/jwt";
-
-export function extractUserIdFromToken(token: string): number | null {
-  return jwtExtractUserId(token);
-}
 
 export const checkUserLogin = (router: any): any | null => {
   if (typeof window === "undefined") return null;

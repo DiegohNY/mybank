@@ -1,0 +1,915 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "MyBank API",
+    "description": "API per progetto universitario bancario MyBank sviluppato con Next.js",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Gestione autenticazione e utenti"
+    },
+    {
+      "name": "Accounts",
+      "description": "Gestione conti bancari"
+    },
+    {
+      "name": "Transactions",
+      "description": "Gestione transazioni bancarie"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Registrazione nuovo utente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password", "first_name", "last_name"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "StrongPass123!"
+                  },
+                  "first_name": {
+                    "type": "string",
+                    "example": "Mario"
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "example": "Rossi"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": 390123456789
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registrazione completata con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "first_name": {
+                              "type": "string"
+                            },
+                            "last_name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Errore validazione dati o email già registrata"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login utente con email e password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login effettuato con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "first_name": {
+                              "type": "string"
+                            },
+                            "last_name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "created_at": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email e password obbligatori"
+          },
+          "401": {
+            "description": "Credenziali non valide"
+          },
+          "500": {
+            "description": "Errore del server"
+          }
+        }
+      }
+    },
+    "/accounts": {
+      "get": {
+        "tags": ["Accounts"],
+        "summary": "Ottieni lista conti utente autenticato",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista conti utente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "account_number": {
+                            "type": "string"
+                          },
+                          "account_type": {
+                            "type": "string",
+                            "enum": ["savings", "checking"]
+                          },
+                          "balance": {
+                            "type": "number",
+                            "format": "float"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "500": {
+            "description": "Errore recupero conti"
+          }
+        }
+      }
+    },
+    "/accounts/new": {
+      "post": {
+        "tags": ["Accounts"],
+        "summary": "Crea nuovo conto bancario",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_type"],
+                "properties": {
+                  "account_type": {
+                    "type": "string",
+                    "enum": ["savings", "checking"],
+                    "example": "savings"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Conto creato con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "account_number": {
+                          "type": "string"
+                        },
+                        "account_type": {
+                          "type": "string"
+                        },
+                        "balance": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Tipo conto non valido o conto duplicato"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "500": {
+            "description": "Errore nella creazione conto"
+          }
+        }
+      }
+    },
+    "/accounts/{id}": {
+      "get": {
+        "tags": ["Accounts"],
+        "summary": "Dettagli di un account specifico con statistiche",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID univoco dell'account"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dettagli dell'account con statistiche",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "account_number": {
+                          "type": "string"
+                        },
+                        "account_type": {
+                          "type": "string",
+                          "enum": ["savings", "checking"]
+                        },
+                        "balance": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "statistics": {
+                          "type": "object",
+                          "properties": {
+                            "transaction_count": {
+                              "type": "integer"
+                            },
+                            "last_transaction_date": {
+                              "type": "string",
+                              "format": "date-time",
+                              "nullable": true
+                            },
+                            "monthly_income": {
+                              "type": "number",
+                              "format": "float"
+                            },
+                            "monthly_expenses": {
+                              "type": "number",
+                              "format": "float"
+                            },
+                            "monthly_transactions": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID account non valido"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "404": {
+            "description": "Conto non trovato"
+          },
+          "500": {
+            "description": "Errore nel recupero conto"
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Recupera storico transazioni dell'utente con filtri opzionali",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "account_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID conto da filtrare (opzionale)"
+          },
+          {
+            "in": "query",
+            "name": "transaction_type",
+            "schema": {
+              "type": "string",
+              "enum": ["deposit", "withdrawal", "transfer_in", "transfer_out"]
+            },
+            "description": "Tipo di transazione da filtrare (opzionale)"
+          },
+          {
+            "in": "query",
+            "name": "date_from",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Data inizio yyyy-mm-dd"
+          },
+          {
+            "in": "query",
+            "name": "date_to",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Data fine yyyy-mm-dd"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
+            "description": "Numero massimo di transazioni da ritornare"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista transazioni filtrate con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "account_id": {
+                            "type": "integer"
+                          },
+                          "transaction_type": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number",
+                            "format": "float"
+                          },
+                          "balance_after": {
+                            "type": "number",
+                            "format": "float"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "account_number": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "filters": {
+                      "type": "object",
+                      "properties": {
+                        "account_id": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "transaction_type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "date_from": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "date_to": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "500": {
+            "description": "Errore nel recupero delle transazioni"
+          }
+        }
+      }
+    },
+    "/transactions/deposit": {
+      "post": {
+        "tags": ["Transactions"],
+        "summary": "Esegue un deposito su un conto bancario",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_id", "amount"],
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "example": 123,
+                    "description": "Id del conto su cui effettuare il deposito"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 100.5,
+                    "description": "Importo del deposito"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Deposito",
+                    "description": "Descrizione opzionale del deposito"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deposito completato con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transaction": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "account_id": {
+                          "type": "integer"
+                        },
+                        "amount": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "transaction_type": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Errore di validazione input"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "500": {
+            "description": "Errore nel processamento del deposito"
+          }
+        }
+      }
+    },
+    "/transactions/withdrawal": {
+      "post": {
+        "tags": ["Transactions"],
+        "summary": "Esegue un prelievo da un conto bancario",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["account_id", "amount"],
+                "properties": {
+                  "account_id": {
+                    "type": "integer",
+                    "example": 123,
+                    "description": "Id del conto su cui effettuare il prelievo"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 50.0,
+                    "description": "Importo del prelievo"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Prelievo bancomat",
+                    "description": "Descrizione opzionale del prelievo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prelievo completato con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "account_id": {
+                          "type": "integer"
+                        },
+                        "transaction_type": {
+                          "type": "string"
+                        },
+                        "amount": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "balance_after": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Errore di validazione input o saldo insufficiente"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "500": {
+            "description": "Errore nel processamento del prelievo"
+          }
+        }
+      }
+    },
+    "/transactions/transfer": {
+      "post": {
+        "tags": ["Transactions"],
+        "summary": "Esegue un bonifico tra due conti",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["from_account_id", "to_account_id", "amount"],
+                "properties": {
+                  "from_account_id": {
+                    "oneOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "example": 123,
+                    "description": "Id conto mittente"
+                  },
+                  "to_account_id": {
+                    "oneOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "example": "IT60X0541234567890",
+                    "description": "Id o IBAN conto destinatario"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 75.0,
+                    "description": "Importo del bonifico"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Bonifico stipendio",
+                    "description": "Descrizione opzionale del bonifico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bonifico completato con successo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "from_account": {
+                          "type": "integer"
+                        },
+                        "to_account": {
+                          "type": "integer"
+                        },
+                        "amount": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "new_from_balance": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "new_to_balance": {
+                          "type": "number",
+                          "format": "float"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Errore di validazione input o bonifico non valido"
+          },
+          "401": {
+            "description": "Token mancante o non valido"
+          },
+          "500": {
+            "description": "Errore nel processamento del bonifico"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
