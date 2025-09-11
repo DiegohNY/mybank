@@ -14,6 +14,9 @@ import {
   createTransaction,
 } from "@/utils/banking";
 
+// Forza il rendering dinamico per questa route API
+export const dynamic = "force-dynamic";
+
 // POST - Elabora deposito
 export async function POST(request: NextRequest) {
   try {
@@ -65,8 +68,7 @@ export async function POST(request: NextRequest) {
       sanitizedBody.account_id,
       sanitizedBody.amount,
       "deposit",
-      sanitizedBody.description || "Deposito",
-      userId
+      sanitizedBody.description || "Deposito"
     );
 
     // Aggiorna il saldo del conto

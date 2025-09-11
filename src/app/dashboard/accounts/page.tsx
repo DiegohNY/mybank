@@ -320,9 +320,6 @@ export default function AccountsPage() {
                   <p className="text-sm text-slate-600 mb-2">
                     {getAccountTypeLabel(account.account_type)}
                   </p>
-                  <p className="text-lg font-mono text-slate-900 mb-1">
-                    IT60 X054 {account.account_number}
-                  </p>
                   <p className="text-xs text-slate-500">
                     Creato il{" "}
                     {new Date(account.created_at).toLocaleDateString("it-IT")}

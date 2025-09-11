@@ -2,11 +2,11 @@ import { connectToDatabase } from "@/lib/database";
 import { createErrorResponse } from "./api";
 
 export const validateUserAccountOwnership = async (
-  accountId: number, 
+  accountId: number,
   userId: number
 ): Promise<any> => {
   const db = await connectToDatabase();
-  
+
   const [accounts] = (await db.execute(
     "SELECT id, balance FROM accounts WHERE id = ? AND user_id = ?",
     [accountId, userId]
@@ -20,31 +20,30 @@ export const validateUserAccountOwnership = async (
 };
 
 export const updateAccountBalance = async (
-  accountId: number, 
+  accountId: number,
   newBalance: number
 ): Promise<void> => {
   const db = await connectToDatabase();
-  
-  await db.execute(
-    "UPDATE accounts SET balance = ? WHERE id = ?",
-    [newBalance, accountId]
-  );
+
+  await db.execute("UPDATE accounts SET balance = ? WHERE id = ?", [
+    newBalance,
+    accountId,
+  ]);
 };
 
 export const createTransaction = async (
   accountId: number,
   amount: number,
   transactionType: string,
-  description: string,
-  userId: number
+  description: string
 ): Promise<any> => {
   const db = await connectToDatabase();
-  
+
   const [result] = await db.execute(
     `INSERT INTO transactions 
-     (account_id, amount, transaction_type, description, user_id, created_at) 
-     VALUES (?, ?, ?, ?, ?, NOW())`,
-    [accountId, amount, transactionType, description, userId]
+     (account_id, amount, transaction_type, description, created_at) 
+     VALUES (?, ?, ?, ?, NOW())`,
+    [accountId, amount, transactionType, description]
   );
 
   // Ottieni la transazione appena creata
