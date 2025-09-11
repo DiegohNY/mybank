@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
       sanitizedBody.account_id,
       sanitizedBody.amount,
       "deposit",
-      sanitizedBody.description || "Deposito"
+      sanitizedBody.description || "Deposito",
+      newBalance
     );
 
     // Aggiorna il saldo del conto

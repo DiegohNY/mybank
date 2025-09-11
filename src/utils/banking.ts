@@ -35,15 +35,16 @@ export const createTransaction = async (
   accountId: number,
   amount: number,
   transactionType: string,
-  description: string
+  description: string,
+  balanceAfter: number
 ): Promise<any> => {
   const db = await connectToDatabase();
 
   const [result] = await db.execute(
     `INSERT INTO transactions 
-     (account_id, amount, transaction_type, description, created_at) 
-     VALUES (?, ?, ?, ?, NOW())`,
-    [accountId, amount, transactionType, description]
+     (account_id, amount, transaction_type, description, balance_after, created_at) 
+     VALUES (?, ?, ?, ?, ?, NOW())`,
+    [accountId, amount, transactionType, description, balanceAfter]
   );
 
   // Ottieni la transazione appena creata
