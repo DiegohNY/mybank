@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
 import { extractUserIdFromToken } from "@/lib/jwt";
+import { createErrorResponse } from "@/utils/api";
+import { BankingSecurity } from "@/middleware/security";
 
 export const dynamic = "force-dynamic";
 
@@ -9,28 +11,24 @@ export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get("Authorization");
     if (!authHeader) {
-      return NextResponse.json(
-        { success: false, error: "Token mancante" },
-        { status: 401 }
-      );
+      return createErrorResponse("Token mancante", 401);
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const userId = extractUserIdFromToken(token);
 
+    // Validazione token con controlli sicurezza
+    const tokenValidation = BankingSecurity.validateAuthToken(token);
+    if (!tokenValidation.valid) {
+      return createErrorResponse("Token non valido", 401);
+    }
+
+    const userId = extractUserIdFromToken(token);
     if (!userId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Token non valido",
-        },
-        { status: 401 }
-      );
+      return createErrorResponse("User non valido", 400);
     }
 
     const db = await connectToDatabase();
     // Query basilare con balance (necessario per dashboard principale)
-    // TODO: In futuro separare endpoint per totali
     const [rows] = (await db.execute(
       "SELECT id, account_number, account_type, balance, status, created_at FROM accounts WHERE user_id = ? ORDER BY created_at DESC",
       [userId]

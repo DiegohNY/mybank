@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
 import { BankingSecurity } from "@/middleware/security";
 import { createErrorResponse } from "@/utils/api";
+import { extractUserIdFromToken } from "@/lib/jwt";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +19,10 @@ export async function POST(request: NextRequest) {
       return createErrorResponse("Token non valido", 401);
     }
 
-    const userId = tokenValidation.userId!;
+    const userId = extractUserIdFromToken(token);
+    if (!userId) {
+      return createErrorResponse("Invalid user", 400);
+    }
     const body = await request.json();
 
     // Sanitizzazione input

@@ -13,6 +13,7 @@ import {
   updateAccountBalance,
   createTransaction,
 } from "@/utils/banking";
+import { extractUserIdFromToken } from "@/lib/jwt";
 
 // Forza il rendering dinamico per questa route API
 export const dynamic = "force-dynamic";
@@ -33,7 +34,10 @@ export async function POST(request: NextRequest) {
       return createErrorResponse("Token non valido", 401);
     }
 
-    const userId = tokenValidation.userId!;
+    const userId = extractUserIdFromToken(token);
+    if (!userId) {
+      return createErrorResponse("Invalid user", 400);
+    }
     const body = await request.json();
 
     // Validazione e sanitizzazione input usando utils

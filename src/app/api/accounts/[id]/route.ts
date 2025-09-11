@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
 import { extractUserIdFromToken } from "@/lib/jwt";
+import { createErrorResponse } from "@/utils/api";
+import { BankingSecurity } from "@/middleware/security";
+
+// Forza il rendering dinamico per questa route API
+export const dynamic = "force-dynamic";
 
 // GET - Dettagli di un account specifico
 export async function GET(
@@ -9,28 +14,21 @@ export async function GET(
 ) {
   try {
     const authHeader = request.headers.get("Authorization");
-
     if (!authHeader) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Token mancante",
-        },
-        { status: 401 }
-      );
+      return createErrorResponse("Token mancante", 401);
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const userId = extractUserIdFromToken(token);
 
+    // Validazione token con controlli sicurezza
+    const tokenValidation = BankingSecurity.validateAuthToken(token);
+    if (!tokenValidation.valid) {
+      return createErrorResponse("Token non valido", 401);
+    }
+
+    const userId = extractUserIdFromToken(token);
     if (!userId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Token non valido",
-        },
-        { status: 401 }
-      );
+      return createErrorResponse("User non valido", 400);
     }
 
     const accountId = params.id;
