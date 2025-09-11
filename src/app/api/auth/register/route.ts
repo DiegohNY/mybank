@@ -26,6 +26,12 @@ export async function POST(request: NextRequest) {
 
     const db = await connectToDatabase();
 
+    const sanitizedEmail = BankingSecurity.sanitizeInput(email.toLowerCase());
+    const sanitizedFirstName = BankingSecurity.sanitizeInput(first_name);
+    const sanitizedLastName = BankingSecurity.sanitizeInput(last_name);
+
+    const passwordHash = await hashPassword(password);
+
     // Controlla se email esiste già
     const [existing] = (await db.execute(
       "SELECT id FROM users WHERE email = ?",
@@ -39,16 +45,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const sanitizedEmail = BankingSecurity.sanitizeInput(email.toLowerCase());
-    const sanitizedFirstName = BankingSecurity.sanitizeInput(first_name);
-    const sanitizedLastName = BankingSecurity.sanitizeInput(last_name);
-    
-    const passwordHash = await hashPassword(password);
-
     // Inserimento nuovo utente
     const [result] = (await db.execute(
       "INSERT INTO users (email, password_hash, first_name, last_name, phone) VALUES (?, ?, ?, ?, ?)",
-      [sanitizedEmail, passwordHash, sanitizedFirstName, sanitizedLastName, phone || null]
+      [
+        sanitizedEmail,
+        passwordHash,
+        sanitizedFirstName,
+        sanitizedLastName,
+        phone || null,
+      ]
     )) as any[];
 
     // Recupera utente creato

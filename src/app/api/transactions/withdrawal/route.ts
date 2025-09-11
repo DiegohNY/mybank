@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
 import { BankingSecurity } from "@/middleware/security";
-import { validateAmount, validateAccountId, validateRequired, sanitizeInput } from "@/utils/validation";
-import { createApiResponse, createErrorResponse } from "@/utils/api";
-import { validateUserAccountOwnership, updateAccountBalance, createTransaction } from "@/utils/banking";
+import { createErrorResponse } from "@/utils/api";
 
-// POST - Elabora prelievo
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting per prevenire abusi
-    const clientIp = request.headers.get("x-forwarded-for") || "unknown";
-    if (!BankingSecurity.checkRateLimit(clientIp, 50, 60000)) {
-      return createErrorResponse("Troppo richieste. Riprova più tardi.", 429);
-    }
-
     const authHeader = request.headers.get("Authorization");
     if (!authHeader) {
       return createErrorResponse("Token mancante", 401);

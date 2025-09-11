@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/database";
 import { extractUserIdFromToken } from "@/utils/auth";
 
+// Forza comportamento dinamico - necessario per request.url
+export const dynamic = "force-dynamic";
+
 // GET - Recupera storico transazioni dell'utente con filtri
 export async function GET(request: NextRequest) {
   try {
