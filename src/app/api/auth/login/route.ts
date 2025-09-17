@@ -17,6 +17,15 @@ export async function POST(request: NextRequest) {
     }
 
     const sanitizedEmail = BankingSecurity.sanitizeInput(email.toLowerCase());
+
+    // Controllo rate limiting per prevenire attacchi brute force
+    const rateLimitCheck = BankingSecurity.checkRateLimit(sanitizedEmail);
+    if (!rateLimitCheck.allowed) {
+      return NextResponse.json(
+        { success: false, error: rateLimitCheck.error },
+        { status: 429 }
+      );
+    }
     const db = await connectToDatabase();
 
     // Controllo se l'utente è presente nel db
@@ -40,6 +49,9 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    // Reset rate limit in caso di login riuscito
+    BankingSecurity.resetRateLimit(sanitizedEmail);
 
     const { password_hash, ...userWithoutPassword } = user;
     const token = generateToken(user.id, user.email);

@@ -1,8 +1,53 @@
-import { verifyToken } from '@/lib/jwt';
+import { verifyToken } from "@/lib/jwt";
+
+interface RateLimitData {
+  attempts: number;
+  firstAttempt: number;
+}
 
 export class BankingSecurity {
-  
-  // Controllo autenticazione JWT standard
+  private static rateLimitStore: Map<string, RateLimitData> = new Map();
+  private static readonly MAX_ATTEMPTS = 5;
+  private static readonly WINDOW_MS = 15 * 60 * 1000; // 15 minuti
+
+  // Rate limiting semplice per proteggere da attacchi brute force
+  static checkRateLimit(identifier: string): {
+    allowed: boolean;
+    error?: string;
+  } {
+    const now = Date.now();
+    const key = `rate_limit_${identifier}`;
+
+    let rateLimitData = this.rateLimitStore.get(key);
+
+    if (!rateLimitData || now - rateLimitData.firstAttempt > this.WINDOW_MS) {
+      rateLimitData = {
+        attempts: 1,
+        firstAttempt: now,
+      };
+      this.rateLimitStore.set(key, rateLimitData);
+      return { allowed: true };
+    }
+
+    rateLimitData.attempts++;
+    this.rateLimitStore.set(key, rateLimitData);
+
+    if (rateLimitData.attempts > this.MAX_ATTEMPTS) {
+      return {
+        allowed: false,
+        error: "Troppi tentativi falliti. Riprova tra qualche minuto",
+      };
+    }
+
+    return { allowed: true };
+  }
+
+  // Reset del rate limit in caso di login riuscito
+  static resetRateLimit(identifier: string): void {
+    const key = `rate_limit_${identifier}`;
+    this.rateLimitStore.delete(key);
+  }
+
   static validateAuthToken(token: string): {
     valid: boolean;
     userId?: number;
