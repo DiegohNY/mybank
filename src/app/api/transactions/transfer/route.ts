@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
         throw new Error("Non puoi trasferire sullo stesso conto");
 
       const [fromAccounts] = (await db.execute(
-        "SELECT id, balance FROM accounts WHERE id = ? AND user_id = ?",
+        "SELECT id, balance FROM accounts WHERE id = ? AND user_id = ? FOR UPDATE",
         [from_account_id, userId]
       )) as any[];
 
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       if (fromAccount.balance < importo) throw new Error("Saldo insufficiente");
 
       // Verifica conto destinatario (può essere ID numerico o IBAN)
-      let toAccountQuery = "SELECT id, balance FROM accounts WHERE id = ?";
+      let toAccountQuery = "SELECT id, balance FROM accounts WHERE id = ? FOR UPDATE";
       let toAccountParam = to_account_id;
 
       if (
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       ) {
         const accountNumber = to_account_id.replace("IT60 X054 ", "");
         toAccountQuery =
-          "SELECT id, balance FROM accounts WHERE account_number = ?";
+          "SELECT id, balance FROM accounts WHERE account_number = ? FOR UPDATE";
         toAccountParam = accountNumber;
       } else if (
         typeof to_account_id === "string" &&
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       ) {
         const accountNumber = to_account_id.slice(-12);
         toAccountQuery =
-          "SELECT id, balance FROM accounts WHERE account_number = ?";
+          "SELECT id, balance FROM accounts WHERE account_number = ? FOR UPDATE";
         toAccountParam = accountNumber;
       }
 
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       const newToBalance = toAccount.balance + importo;
 
       // Inserisci transazioni con descrizioni più leggibili
-      const [outResult] = (await db.execute(
+      await db.execute(
         "INSERT INTO transactions (account_id, transaction_type, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)",
         [
           from_account_id,
@@ -124,9 +124,9 @@ export async function POST(request: NextRequest) {
           newFromBalance,
           `Bonifico inviato${description ? ": " + description : ""}`,
         ]
-      )) as any[];
+      );
 
-      const [inResult] = (await db.execute(
+      await db.execute(
         "INSERT INTO transactions (account_id, transaction_type, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)",
         [
           actualToAccountId,
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
           newToBalance,
           `Bonifico ricevuto${description ? ": " + description : ""}`,
         ]
-      )) as any[];
+      );
 
       // Aggiorna i saldi di entrambi i conti
       const updateFromResult = await db.execute(
