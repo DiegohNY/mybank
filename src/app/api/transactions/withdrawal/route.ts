@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       throw new Error("Saldo insufficiente");
     }
 
-    const newBalance = currentBalance - sanitizedBody.amount;
+    const newBalance = parseFloat((currentBalance - sanitizedBody.amount).toFixed(2));
 
     // Inserisci transazione prelievo
     const [result] = (await db.execute(

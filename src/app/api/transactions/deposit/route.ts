@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     // Calcola nuovo saldo
     const currentBalance = parseFloat(account.balance.toString());
-    const newBalance = currentBalance + sanitizedBody.amount;
+    const newBalance = parseFloat((currentBalance + sanitizedBody.amount).toFixed(2));
 
     // Crea la transazione
     const transaction = await createTransaction(

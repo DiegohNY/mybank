@@ -112,8 +112,8 @@ export async function POST(request: NextRequest) {
       const toAccount = toAccountRows[0];
       const actualToAccountId = toAccount.id; // Usa l'ID numerico del database
 
-      const newFromBalance = fromAccount.balance - importo;
-      const newToBalance = toAccount.balance + importo;
+      const newFromBalance = parseFloat((parseFloat(fromAccount.balance) - importo).toFixed(2));
+      const newToBalance = parseFloat((parseFloat(toAccount.balance) + importo).toFixed(2));
 
       // Inserisci transazioni con descrizioni più leggibili
       await db.execute(
