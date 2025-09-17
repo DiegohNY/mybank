@@ -82,7 +82,7 @@ export class BankingSecurity {
       if (isNaN(input) || input < 0) {
         throw new Error("Importo non valido");
       }
-      return Math.round(input * 100) / 100;
+      return parseFloat(input.toFixed(2));
     }
 
     return input;

@@ -80,7 +80,8 @@ export async function POST(request: NextRequest) {
       if (fromAccount.balance < importo) throw new Error("Saldo insufficiente");
 
       // Verifica conto destinatario (può essere ID numerico o IBAN)
-      let toAccountQuery = "SELECT id, balance FROM accounts WHERE id = ? FOR UPDATE";
+      let toAccountQuery =
+        "SELECT id, balance FROM accounts WHERE id = ? FOR UPDATE";
       let toAccountParam = to_account_id;
 
       if (
