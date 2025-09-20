@@ -66,6 +66,11 @@ export default function DashboardPage() {
         },
       });
 
+      if (response.status === 401) {
+        handleLogout(router);
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.data) {
@@ -88,6 +93,12 @@ export default function DashboardPage() {
           "Content-Type": "application/json",
         },
       });
+
+      if (response.status === 401) {
+        // Token scaduto o non valido
+        handleLogout(router);
+        return;
+      }
 
       if (response.ok) {
         const data = await response.json();

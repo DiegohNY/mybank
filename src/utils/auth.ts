@@ -11,6 +11,22 @@ export const checkUserLogin = (router: any): any | null => {
     return null;
   }
 
+  // Verifica se il token è scaduto decodificandolo lato client
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (payload.exp && payload.exp < currentTime) {
+      clearAuthData();
+      router.push("/login");
+      return null;
+    }
+  } catch (error) {
+    clearAuthData();
+    router.push("/login");
+    return null;
+  }
+
   return userData;
 };
 
